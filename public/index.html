@@ -5,18 +5,27 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>اختيار الدور</title>
   <style>
-    body { font-family: system-ui, Arial; padding: 24px; line-height: 1.8; }
-    h1 { margin-bottom: 16px; }
-    a { display: inline-block; margin: 8px 0; font-size: 18px; }
+    :root { --primary:#5b21b6; --text:#111; --muted:#666; }
+    body { font-family: system-ui, Arial; padding: 24px; line-height: 1.8; color:var(--text); }
+    h1 { font-size: 40px; margin: 0 0 12px; }
+    p  { color: var(--muted); margin: 0 0 24px; }
+    .row { display:flex; gap:16px; align-items:center; }
+    a.btn {
+      display:inline-block; padding:14px 20px; border-radius:12px; font-size:18px;
+      text-decoration:none; border:2px solid var(--primary); color:var(--primary);
+    }
+    a.btn.primary { background:var(--primary); color:#fff; }
   </style>
 </head>
 <body>
-  <h1>اختر دورك في اللعبة</h1>
+  <h1>أهلاً بك في لعبة الكويز</h1>
+  <p>اختر دورك للمتابعة:</p>
 
-  <!-- يفتح صفحة المستضيف -->
-  <a href="host.html">أنا المستضيف</a><br>
+  <div class="row">
+    <a class="btn" href="player.html">أنا اللاعب</a>
+    <a class="btn primary" href="host.html">أنا المضيف</a>
+  </div>
 
-  <!-- يفتح صفحة اللاعب -->
-  <a href="player.html">أنا اللاعب</a>
+  <p style="margin-top:24px;color:#888;">لو ما ظهر التغيير حدّث الصفحة بعد ثوانٍ.</p>
 </body>
 </html>
