@@ -1,12 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiz Game</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>لعبة الكويز</title>
+  <style>
+    body {font-family: system-ui, -apple-system, Segoe UI, Tahoma, Arial; margin:0; padding:40px; line-height:1.8;}
+    .wrap {max-width:720px; margin:auto; text-align:center;}
+    h1 {margin-bottom:10px;}
+    p  {color:#555; margin-top:0;}
+    .buttons {display:flex; gap:16px; justify-content:center; flex-wrap:wrap; margin-top:24px;}
+    a.btn {padding:14px 20px; border-radius:10px; text-decoration:none; border:2px solid #111;}
+    a.host {background:#111; color:#fff;}
+    a.player {background:#fff; color:#111;}
+    small {display:block; margin-top:16px; color:#777;}
+  </style>
 </head>
 <body>
-    <h1>Welcome to the Quiz Game!</h1>
-    <p>More features coming soon...</p>
+  <div class="wrap">
+    <h1>أهلاً بك في لعبة الكويز</h1>
+    <p>اختر دورك للمتابعة:</p>
+    <div class="buttons">
+      <a class="btn host"   href="public/host.html">أنا المضيف</a>
+      <a class="btn player" href="public/index.html">أنا اللاعب</a>
+    </div>
+    <small>لو ما ظهر التغيير، حدّث الصفحة بعد ثواني.</small>
+  </div>
 </body>
 </html>
