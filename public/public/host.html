@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="ar" dir="rtl"><head>
+<meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>اتحداك - هوست</title>
+<style>
+  body{background:#0b0b0b;color:#fff;font-family:Tahoma;text-align:center;padding:18px}
+  .wrap{max-width:900px;margin:auto}
+  .card{background:#171717;border-radius:14px;padding:16px;margin:12px 0;box-shadow:0 8px 24px #0007}
+  .team{padding:6px 10px;background:#262626;border-radius:8px;display:inline-block;margin:4px}
+  .btn{padding:10px 14px;border:0;border-radius:10px;background:#3a3a3a;color:#fff;margin:6px;font-size:15px}
+  .btn:active{transform:scale(.98)} .ok{background:#2e7d32}.bad{background:#c62828}
+  .pulse{animation:pulse 1s infinite}@keyframes pulse{0%{transform:scale(1)}50%{transform:scale(1.03)}100%{transform:scale(1)}}
+</style>
+</head><body>
+<div class="wrap">
+  <h1>🎯 لوحة التحكم (هوست)</h1>
+  <div class="card">
+    <button class="btn" onclick="openRound()">فتح جولة (تفعيل زر السرعة)</button>
+  </div>
+  <div class="card">
+    <h3>الفرق</h3><div id="teams">—</div>
+  </div>
+  <div class="card">
+    <h3>السؤال الجاري</h3>
+    <div id="qBox">—</div>
+    <div id="buzzBox">—</div>
+    <div>
+      <button class="btn ok" onclick="addPoints(10)">+10</button>
+      <button class="btn ok" onclick="addPoints(20)">+20</button>
+      <button class="btn ok" onclick="addPoints(30)">+30</button>
+      <button class="btn bad" onclick="addPoints(-10)">-10</button>
+    </div>
+  </div>
+  <div class="card">
+    <h3>النتائج</h3><div id="scoreBoard">—</div>
+  </div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+const role=sessionStorage.getItem('role'), password=sessionStorage.getItem('password')||'';
+if(role!=='host') location.href='/';
+const socket=io();
+socket.emit('login',{role:'host',password});
+socket.on('loginFail',msg=>alert(msg));
+socket.on('loginSuccess',()=>console.log('host ok'));
+
+socket.on('updateTeams',({teams,scores})=>{
+  document.getElementById('teams').innerHTML=teams.map(t=>`<span class="team">${t.name}</span>`).join(' ')||'—';
+  renderScores(scores);
+});
+socket.on('showQuestion',q=>{
+  document.getElementById('qBox').innerText=`${q.category} - ${q.difficulty} (اختاره: ${q.byTeamName})`;
+  document.getElementById('buzzBox').innerHTML='بانتظار أول زر سرعة...';
+});
+socket.on('playerBuzzed',({teamName})=>{
+  document.getElementById('buzzBox').innerHTML=`🚨 أول من ضغط: <b>${teamName}</b>`;
+});
+socket.on('updateScores',scores=>renderScores(scores));
+
+function renderScores(scores){
+  const html=Object.keys(scores).map(k=>`<div>${k}: <b>${scores[k]}</b> نقطة</div>`).join('');
+  document.getElementById('scoreBoard').innerHTML=html||'—';
+}
+function addPoints(p){
+  const team=prompt('اكتب اسم الفريق المراد تعديل نقاطه:');
+  if(!team) return;
+  socket.emit('updateScore',{teamName:team,points:Number(p)});
+}
+function openRound(){ socket.emit('hostOpenRound'); document.getElementById('buzzBox').innerText='تم فتح الجولة ✅'; }
+</script>
+</body></html>
