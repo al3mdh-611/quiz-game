@@ -1,18 +1,21 @@
-// أسئلة تجريبية
+// أسئلة تجريبية — تقدر تعدلها بحرّيتك
 const questions = [
   { q: "ما عاصمة السعودية؟", choices: ["جدة", "الرياض", "مكة", "الدمام"], answer: 1 },
   { q: "٢ + ٣ = ؟", choices: ["٤", "٥", "٦", "٧"], answer: 1 },
   { q: "لون السماء غالبًا؟", choices: ["أخضر", "أزرق", "أصفر", "أحمر"], answer: 1 }
 ];
 
+// مؤشرات
 let i = 0;
 let score = 0;
 
+// عناصر الصفحة
 const qEl = document.getElementById("q");
 const choicesEl = document.getElementById("choices");
 const nextBtn = document.getElementById("next");
 const resultEl = document.getElementById("result");
 
+// رسم السؤال الحالي
 function render() {
   const item = questions[i];
   qEl.textContent = item.q;
@@ -27,6 +30,7 @@ function render() {
   nextBtn.disabled = true;
 }
 
+// عند اختيار خيار
 function select(idx) {
   const correct = questions[i].answer;
   if (idx === correct) {
@@ -35,11 +39,12 @@ function select(idx) {
   } else {
     resultEl.textContent = "إجابة خاطئة ❌";
   }
-  // منع الضغط المتكرر
+  // قفل الأزرار بعد الاختيار
   [...choicesEl.children].forEach(b => (b.disabled = true));
   nextBtn.disabled = false;
 }
 
+// التالي
 nextBtn.onclick = () => {
   i++;
   if (i < questions.length) {
@@ -52,5 +57,5 @@ nextBtn.onclick = () => {
   }
 };
 
-// بداية التشغيل
+// بدء التشغيل
 render();
