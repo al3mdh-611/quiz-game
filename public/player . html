@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>صفحة اللاعب</title>
+</head>
+<body>
+  <h1>أنت الآن اللاعب</h1>
+  <p>هنا ستظهر الأسئلة والإجابات.</p>
+  <a href="index.html">الرجوع لصفحة البداية</a>
+</body>
+</html>
