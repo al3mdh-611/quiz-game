@@ -1,31 +1,40 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>صفحة اللاعب</title>
   <style>
+    :root { --primary:#5b21b6; }
     body { font-family: system-ui, Arial; padding: 24px; line-height: 1.8; }
-    h1 { margin-bottom: 12px; }
-    #choices { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
-    #choices button { padding: 8px 12px; }
-    #next { padding: 8px 14px; }
-    #result { margin-top: 10px; font-weight: bold; }
+    h1 { font-size: 36px; margin: 0 0 8px; }
+    #q { font-size: 24px; margin: 16px 0; }
+    #choices button {
+      border: 0; background: #eef; padding: 10px 14px; border-radius: 999px;
+      margin: 4px; cursor: pointer;
+    }
+    #choices button:disabled { opacity: .6; cursor: default; }
+    #next {
+      margin-top:16px; padding:10px 16px; border-radius:10px; border:0;
+      background: var(--primary); color:#fff; cursor:pointer;
+    }
+    #next:disabled { opacity:.6; }
+    a { color: var(--primary); }
   </style>
 </head>
 <body>
   <h1>أنت الآن اللاعب</h1>
 
-  <div id="game">
-    <p id="q" style="font-size:20px; font-weight:bold;"></p>
-    <div id="choices"></div>
-    <button id="next" disabled>التالي</button>
-    <p id="result"></p>
-  </div>
+  <div id="q">سؤال سيظهر هنا</div>
+  <div id="choices"></div>
 
-  <p><a href="index.html">الرجوع لصفحة البداية</a></p>
+  <button id="next" disabled>التالي</button>
 
-  <!-- ربط كود اللعبة -->
-  <script src="app.js"></script>
+  <p id="result" style="margin-top:12px;"></p>
+
+  <p style="margin-top:20px;"><a href="index.html">الرجوع لصفحة البداية</a></p>
+
+  <!-- ملف المنطق -->
+  <script src="app.js" defer></script>
 </body>
 </html>
