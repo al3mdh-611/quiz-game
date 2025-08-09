@@ -1,110 +1,49 @@
-const express = require("express");
-const http = require("http");
-const { Server } = require("socket.io");
-const path = require("path");
+import express from "express";
+import { createServer } from "http";
+import { Server } from "socket.io";
+import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
-const server = http.createServer(app);
-const io = new Server(server, { cors: { origin: "*" } });
+const httpServer = createServer(app);
+const io = new Server(httpServer, {
+  cors: { origin: "*" }
+});
 
-const PORT = process.env.PORT || 3000;
-
-// المجالات الستة
-const categories = ["أسئلة عامة", "أسئلة دينية", "أكمل المثل", "أعلام الدول", "ألغاز", "مجال إضافي"];
-
-// حالة اللعبة
-let teams = [];          // [{id, name}]
-let hostSocket = null;   // سوكت الهوست
-let scores = {};         // {teamName: points}
-let round = { open: true, buzzerWinner: null }; // زر السرعة
-
-// نخدم ملفات الواجهة من /public
+// نخدم ملفات الواجهة من مجلد public
 app.use(express.static(path.join(__dirname, "public")));
 
 io.on("connection", (socket) => {
-  // دخول (هوست/لاعب)
-  socket.on("login", ({ role, teamName, password }) => {
-    if (role === "host" && password === "adms hussain") {
-      socket.data.role = "host";
-      hostSocket = socket;
-      socket.emit("loginSuccess", { role: "host", teams, scores });
-      io.emit("updateScores", scores);
-      return;
-    }
-    if (role === "player" && password === "game12345") {
-      const name = (teamName || "").trim();
-      if (!name) return socket.emit("loginFail", "❌ اكتب اسم الفريق");
-      socket.data.role = "player";
-      socket.data.teamName = name;
+  console.log("🔌 متصل:", socket.id);
 
-      const exists = teams.find(t => t.name === name);
-      if (exists) exists.id = socket.id; // حدّث ID لو رجع يتصل
-      else {
-        teams.push({ id: socket.id, name });
-        if (scores[name] == null) scores[name] = 0;
-      }
-
-      socket.emit("loginSuccess", { role: "player", categories });
-      if (hostSocket) hostSocket.emit("updateTeams", { teams, scores });
-      io.emit("updateScores", scores);
-      return;
-    }
-    socket.emit("loginFail", "❌ كلمة السر غير صحيحة");
+  // أمثلة أحداث:
+  socket.on("join-as-host", () => {
+    socket.join("hosts");
   });
 
-  // بداية جولة جديدة (الهوست يفتح الزر للجميع)
-  socket.on("hostOpenRound", () => {
-    if (socket !== hostSocket) return;
-    round = { open: true, buzzerWinner: null };
-    io.emit("roundOpened"); // واجهات اللاعبين تشغّل أنيميشن/صوت جاهزية
+  socket.on("join-as-player", () => {
+    socket.join("players");
   });
 
-  // اللاعب يختار المجال + الصعوبة
-  socket.on("chooseCategory", ({ category, difficulty }) => {
-    if (socket.data.role !== "player") return;
-    if (!categories.includes(category)) return;
-    const payload = {
-      category,
-      difficulty,
-      byTeamId: socket.id,
-      byTeamName: socket.data.teamName || "فريق"
-    };
-    if (hostSocket) hostSocket.emit("showQuestion", payload);
-    io.emit("showQuestionPlayers", payload);
-    // تفتح جولة جديدة تلقائيًا
-    round = { open: true, buzzerWinner: null };
+  socket.on("host-send-question", (q) => {
+    // نرسل السؤال لكل اللاعبين
+    io.to("players").emit("new-question", q);
   });
 
-  // زر السرعة: أول ضغطة فقط تُقبل
-  socket.on("buzz", () => {
-    if (!round.open) return;
-    if (round.buzzerWinner) return;
-    if (socket.data.role !== "player") return;
-
-    round.buzzerWinner = {
-      teamId: socket.id,
-      teamName: socket.data.teamName || "فريق"
-    };
-    round.open = false; // قفل الزر
-    if (hostSocket) hostSocket.emit("playerBuzzed", round.buzzerWinner);
-    io.emit("buzzerLocked", round.buzzerWinner); // للتأثيرات على الشاشات
-  });
-
-  // تعديل نقاط (من الهوست فقط)
-  socket.on("updateScore", ({ teamName, points }) => {
-    if (socket !== hostSocket) return;
-    if (typeof points !== "number") return;
-    if (scores[teamName] == null) scores[teamName] = 0;
-    scores[teamName] += points;
-    io.emit("updateScores", scores);
+  socket.on("player-answer", (payload) => {
+    // نرسل الإجابة للمضيف
+    io.to("hosts").emit("player-answered", payload);
   });
 
   socket.on("disconnect", () => {
-    teams = teams.filter(t => t.id !== socket.id);
-    if (hostSocket) hostSocket.emit("updateTeams", { teams, scores });
+    console.log("❌ انفصل:", socket.id);
   });
 });
 
-server.listen(PORT, () => {
-  console.log(`✅ Server running on :${PORT}`);
-});
+const PORT = process.env.PORT || 3000;
+httpServer.listen(PORT, () =>
+  console.log(`✅ Server running on http://localhost:${PORT}`)
+);
