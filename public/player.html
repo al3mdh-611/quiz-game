@@ -1,13 +1,31 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>صفحة اللاعب</title>
+  <style>
+    body { font-family: system-ui, Arial; padding: 24px; line-height: 1.8; }
+    h1 { margin-bottom: 12px; }
+    #choices { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
+    #choices button { padding: 8px 12px; }
+    #next { padding: 8px 14px; }
+    #result { margin-top: 10px; font-weight: bold; }
+  </style>
 </head>
 <body>
   <h1>أنت الآن اللاعب</h1>
-  <p>هنا ستظهر الأسئلة والإجابات.</p>
-  <a href="index.html">الرجوع لصفحة البداية</a>
+
+  <div id="game">
+    <p id="q" style="font-size:20px; font-weight:bold;"></p>
+    <div id="choices"></div>
+    <button id="next" disabled>التالي</button>
+    <p id="result"></p>
+  </div>
+
+  <p><a href="index.html">الرجوع لصفحة البداية</a></p>
+
+  <!-- ربط كود اللعبة -->
+  <script src="app.js"></script>
 </body>
 </html>
